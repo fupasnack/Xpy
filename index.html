@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FUPA Snack — Masuk</title>
+
+  <!-- Manifest (akan ada file terpisah, pendaftaran sudah disiapkan di bawah) -->
+  <link rel="manifest" href="/manifest.webmanifest">
+
+  <!-- Ikon via CDN (tanpa emoji) -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <!-- Font profesional via CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <meta name="theme-color" content="#0b5bd3" />
+
+  <style>
+    :root{
+      --bg1:#0b5bd3;
+      --bg2:#e6f0ff;
+      --txt:#0b1b2b;
+      --muted:#6b7a90;
+      --accent:#0ea5e9;
+      --ok:#16a34a;
+      --err:#dc2626;
+      --focus:#60a5fa;
+      --surface: rgba(255,255,255,0.85);
+      --border: rgba(13, 42, 84, 0.12);
+      --shadow: 0 15px 30px rgba(13,42,84,0.18), 0 3px 8px rgba(13,42,84,0.12);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--txt);
+      background:
+        radial-gradient(1200px 800px at 10% 10%, #ffffff 0%, var(--bg2) 60%, #e8f3ff 100%),
+        linear-gradient(135deg, var(--bg1) 0%, #3ea8ff 35%, #b9dbff 100%);
+      overflow:auto;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Asap halus (CSS-only, 60fps) */
+    .smoke{
+      position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
+    }
+    .smoke::before, .smoke::after{
+      content:""; position:absolute; inset:-20%;
+      background: radial-gradient(closest-side, rgba(255,255,255,0.35), rgba(255,255,255,0) 70%),
+                  radial-gradient(closest-side, rgba(255,255,255,0.25), rgba(255,255,255,0) 70%),
+                  radial-gradient(closest-side, rgba(255,255,255,0.18), rgba(255,255,255,0) 70%);
+      background-size: 40% 40%, 50% 50%, 35% 35%;
+      background-position: 20% 30%, 70% 60%, 40% 80%;
+      background-repeat:no-repeat;
+      filter: blur(22px);
+      animation: drift 26s linear infinite;
+      mix-blend-mode: screen;
+    }
+    .smoke::after{
+      animation-duration: 34s;
+      opacity:.7;
+      transform: scale(1.1);
+    }
+    @keyframes drift {
+      0% {transform: translate3d(0,0,0) scale(1);}
+      50% {transform: translate3d(2%, -2%, 0) scale(1.05);}
+      100% {transform: translate3d(0,0,0) scale(1);}
+    }
+
+    .wrap{
+      position:relative; z-index:1;
+      min-height:100%; display:grid; place-items:center; padding:24px;
+    }
+
+    .card{
+      width:100%; max-width: 460px;
+      background: var(--surface);
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .card:hover{ transform: translateY(-1px); }
+
+    .header{
+      display:flex; align-items:center; gap:12px;
+      padding:24px 24px 0 24px;
+    }
+    .logo{
+      width:40px; height:40px; display:grid; place-items:center;
+      border-radius:10px; background:linear-gradient(135deg,#0b5bd3, #3ea8ff);
+      color:white; box-shadow: 0 6px 16px rgba(11,91,211,0.35);
+    }
+    .brand{
+      font-weight:700; letter-spacing:0.2px; color:#072144;
+    }
+    .sub{
+      font-size:12px; color:var(--muted); margin-top:2px;
+    }
+
+    .content{ padding: 18px 24px 4px 24px; }
+
+    .field{
+      margin:14px 0;
+    }
+    .label{
+      display:flex; align-items:center; justify-content:space-between;
+      font-size:13px; color:#15304f; margin-bottom:8px; font-weight:600;
+    }
+    .control{
+      position:relative;
+    }
+    .input{
+      width:100%; height:46px; padding:0 44px 0 14px;
+      background:white; color:#0a223d; border:1px solid var(--border);
+      border-radius:10px; outline:none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+    .input:focus{
+      border-color: var(--focus);
+      box-shadow: 0 0 0 4px rgba(96,165,250,0.25);
+    }
+    .icon-right{
+      position:absolute; right:10px; top:50%; transform: translateY(-50%);
+      color:#33577f; cursor:pointer; padding:6px; border-radius:8px;
+      transition: background .15s ease, color .15s ease;
+    }
+    .icon-right:hover{ background: #e8f0fb; color:#0b5bd3; }
+
+    .helper{
+      min-height:18px; font-size:12px; color:var(--muted); margin-top:6px;
+    }
+    .helper.err{ color: var(--err); }
+    .helper.ok{ color: var(--ok); }
+
+    .actions{
+      display:flex; align-items:center; gap:12px; margin-top:8px;
+    }
+    .btn{
+      position:relative;
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px; height:46px; padding:0 16px; min-width:140px;
+      font-weight:600; color:white;
+      background: linear-gradient(135deg, #0b5bd3, #0ea5e9);
+      border: none; border-radius:10px; cursor:pointer;
+      box-shadow: 0 10px 18px rgba(11,91,211,0.35), inset 0 -2px 0 rgba(255,255,255,0.25);
+      transition: transform .06s ease, filter .15s ease, box-shadow .15s ease;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn[disabled]{ cursor:not-allowed; filter:grayscale(.2) brightness(.9); opacity:.8; }
+    .btn .spinner{
+      width:16px; height:16px; border-radius:50%;
+      border:2px solid rgba(255,255,255,0.5);
+      border-top-color:#fff; animation: spin .7s linear infinite;
+    }
+    @keyframes spin{ to { transform: rotate(360deg); } }
+
+    .note{
+      margin-top:14px; font-size:12px; color:var(--muted);
+      display:flex; align-items:flex-start; gap:8px;
+    }
+    .note i{ color:#0b5bd3; margin-top:2px; }
+
+    .footer{
+      padding: 14px 24px 20px; display:flex; align-items:center; justify-content:space-between;
+      color:#355073; font-size:12px;
+    }
+    .links a{
+      color:#0b5bd3; font-weight:600; text-decoration:none;
+    }
+    .links a:hover{ text-decoration:underline; }
+
+    /* Responsif */
+    @media (max-width:480px){
+      .card{ border-radius:14px; }
+      .header{ padding:20px 20px 0 20px; }
+      .content{ padding:14px 20px 0 20px; }
+      .footer{ padding:12px 20px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="smoke" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <main class="card" role="main" aria-labelledby="title">
+      <header class="header">
+        <div class="logo" aria-hidden="true">
+          <i class="fa-solid fa-cookie-bite"></i>
+        </div>
+        <div>
+          <div id="title" class="brand">FUPA Snack</div>
+          <div class="sub">Masuk untuk melanjutkan ke aplikasi</div>
+        </div>
+      </header>
+
+      <section class="content">
+        <form id="loginForm" novalidate>
+          <div class="field">
+            <label class="label" for="email">
+              <span><i class="fa-regular fa-envelope"></i> Email</span>
+              <span id="emailStatus" class="helper"></span>
+            </label>
+            <div class="control">
+              <input id="email" name="email" class="input" type="email" autocomplete="username" placeholder="nama@fupa.id" required aria-describedby="emailHelp">
+            </div>
+            <div id="emailHelp" class="helper">Gunakan email terdaftar. Contoh: karomi@fupa.id</div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="password">
+              <span><i class="fa-solid fa-key"></i> Kata sandi</span>
+              <span id="pwStatus" class="helper"></span>
+            </label>
+            <div class="control">
+              <input id="password" name="password" class="input" type="password" autocomplete="current-password" placeholder="Kata sandi" required aria-describedby="pwHelp">
+              <div id="togglePw" class="icon-right" role="button" tabindex="0" aria-label="Tampilkan/sembunyikan sandi">
+                <i id="eyeIcon" class="fa-regular fa-eye"></i>
+              </div>
+            </div>
+            <div id="pwHelp" class="helper">Klik ikon untuk tampilkan/sembunyikan. Nilai tidak akan ter-reset.</div>
+          </div>
+
+          <div class="actions">
+            <button id="btnLogin" class="btn" type="submit" aria-live="polite">
+              <span class="btn-label"><i class="fa-solid fa-right-to-bracket"></i> Masuk</span>
+              <span class="spinner" style="display:none" aria-hidden="true"></span>
+            </button>
+            <div id="formMsg" class="helper" role="status"></div>
+          </div>
+
+          <div class="note">
+            <i class="fa-solid fa-circle-info"></i>
+            <div>
+              Masuk hanya untuk akun yang sudah diberi peran. Admin diarahkan ke admin.html, karyawan ke karyawan.html. Akses langsung ke halaman lain tanpa sesi akan diblokir.
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <footer class="footer">
+        <div>© Fupa Snack by Annisa & Karomi</div>
+        <div class="links">
+          <a href="#" aria-disabled="true">Bantuan</a>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Firebase v9 modular via CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import {
+      getAuth, setPersistence, browserLocalPersistence, signInWithEmailAndPassword, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import {
+      getFirestore, doc, getDoc, setDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    // --- Konfigurasi Firebase (dari Anda) ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyCt8OGr4HlmbjdxB0cSbm3_vkzm2NA3AXU",
+      authDomain: "presensi-2bbde.firebaseapp.com",
+      projectId: "presensi-2bbde",
+      storageBucket: "presensi-2bbde.firebasestorage.app",
+      messagingSenderId: "853002288058",
+      appId: "1:853002288058:web:a276789416fecf2b733b83",
+      measurementId: "G-Y1F50VXBDD"
+    };
+
+    // --- Inisialisasi ---
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // --- UID & role mapping berdasarkan data Anda (tanpa default role) ---
+    const ADMIN_UIDS = new Set([
+      "4umvjsqrVhdJpmhXqTPg2iIsqRM2", // karomi@fupa.id
+      "rPwiF8tnjwZRg0JcI9ZrXUP6Ofy1"  // annisa@fupa.id
+    ]);
+    const KARYAWAN_UIDS = new Set([
+      "cfs89ed9eccfaB1u3xGEVwpKDHk2", // cabang1@fupa.id
+      "dup97Zc5QgP9XHUU354kDdmDeDj2", // cabang2@fupa.id
+      "iuCabKgZeTPgMecASCh4p8HxcD13", // cabang3@fupa.id
+      "xfncPACSDDZNKykNR1dhISO6Y7h2"  // cabang4@fupa.id
+    ]);
+
+    // --- Elemen UI ---
+    const form = document.getElementById('loginForm');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const togglePw = document.getElementById('togglePw');
+    const eyeIcon = document.getElementById('eyeIcon');
+    const btnLogin = document.getElementById('btnLogin');
+    const spinner = btnLogin.querySelector('.spinner');
+    const btnLabel = btnLogin.querySelector('.btn-label');
+    const formMsg = document.getElementById('formMsg');
+    const emailStatus = document.getElementById('emailStatus');
+    const pwStatus = document.getElementById('pwStatus');
+
+    // --- Helper UI ---
+    function setLoading(state){
+      if(state){
+        btnLogin.setAttribute('disabled','disabled');
+        spinner.style.display = 'inline-block';
+        btnLabel.style.opacity = '0';
+      }else{
+        btnLogin.removeAttribute('disabled');
+        spinner.style.display = 'none';
+        btnLabel.style.opacity = '1';
+      }
+    }
+    function setMsg(el, text, type=''){
+      el.textContent = text || '';
+      el.classList.remove('err','ok');
+      if(type) el.classList.add(type);
+    }
+    function roleOf(uid){
+      if(ADMIN_UIDS.has(uid)) return 'admin';
+      if(KARYAWAN_UIDS.has(uid)) return 'karyawan';
+      return null; // tidak ada role default
+    }
+    function redirectByRole(role){
+      if(role === 'admin') window.location.replace('admin.html');
+      else if(role === 'karyawan') window.location.replace('karyawan.html');
+    }
+
+    // --- Toggle password (nilai tidak di-reset) ---
+    function togglePassword(){
+      const showing = password.type === 'text';
+      password.type = showing ? 'password' : 'text';
+      eyeIcon.className = showing ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash';
+      password.focus();
+    }
+    togglePw.addEventListener('click', togglePassword);
+    togglePw.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); togglePassword(); } });
+
+    // --- Validasi ringan realtime ---
+    email.addEventListener('input', ()=>{
+      if(email.validity.typeMismatch){ setMsg(emailStatus, 'Format email tidak valid', 'err'); }
+      else if(email.value.length===0){ setMsg(emailStatus, 'Wajib diisi'); }
+      else{ setMsg(emailStatus, 'OK', 'ok'); }
+    });
+    password.addEventListener('input', ()=>{
+      if(password.value.length===0){ setMsg(pwStatus, 'Wajib diisi'); }
+      else if(password.value.length<6){ setMsg(pwStatus, 'Minimal 6 karakter', 'err'); }
+      else{ setMsg(pwStatus, 'OK', 'ok'); }
+    });
+
+    // --- Sesi persist (TTI cepat, redirect instan jika sudah login) ---
+    setPersistence(auth, browserLocalPersistence).catch(()=>{ /* fallback diam */ });
+
+    onAuthStateChanged(auth, async (user)=>{
+      if(!user) return;
+      try{
+        // Cek/Set dokumen user & role
+        const uid = user.uid;
+        let role = roleOf(uid);
+        const ref = doc(db, 'users', uid);
+        const snap = await getDoc(ref);
+
+        // Jika dokumen ada, gunakan role dari dokumen jika valid; jika tidak, pakai mapping tegas.
+        if(snap.exists()){
+          const data = snap.data();
+          // Tegakkan role sesuai mapping yang Anda tentukan (tanpa default)
+          const mapped = role;
+          if(!mapped){
+            // Unknown: logout paksa + pesan
+            await signOut(auth);
+            setMsg(formMsg, 'Akun tidak memiliki peran yang diizinkan. Hubungi admin untuk registrasi peran.', 'err');
+            return;
+          }
+          // Sinkronkan bila berbeda
+          if(data.role !== mapped){
+            await setDoc(ref, { role: mapped, updatedAt: serverTimestamp() }, { merge:true });
+          }
+          role = mapped;
+        }else{
+          // Auto-create dokumen users/{uid} dengan role hasil mapping
+          if(!role){
+            await signOut(auth);
+            setMsg(formMsg, 'Akun belum terdaftar sebagai admin/karyawan. Hubungi admin.', 'err');
+            return;
+          }
+          await setDoc(ref, {
+            uid,
+            email: user.email || '',
+            displayName: user.displayName || '',
+            photoURL: user.photoURL || '',
+            role,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          }, { merge:true });
+        }
+
+        // Redirect sesuai role
+        redirectByRole(role);
+      }catch(e){
+        // Jika terjadi error di observer, tetap aman di halaman login
+        console.error(e);
+      }
+    });
+
+    // --- Login flow (disable tombol, loading presisi, cegah klik ganda) ---
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      setMsg(formMsg, '');
+      setMsg(emailStatus, '');
+      setMsg(pwStatus, '');
+
+      if(!email.value){ setMsg(emailStatus, 'Wajib diisi', 'err'); email.focus(); return; }
+      if(!password.value){ setMsg(pwStatus, 'Wajib diisi', 'err'); password.focus(); return; }
+
+      setLoading(true);
+      try{
+        const cred = await signInWithEmailAndPassword(auth, email.value.trim(), password.value);
+        const uid = cred.user.uid;
+        const mappedRole = roleOf(uid);
+        if(!mappedRole){
+          // Tidak ada role, langsung signOut dan beri pesan
+          await signOut(auth);
+          setLoading(false);
+          setMsg(formMsg, 'Akun tidak memiliki peran yang diizinkan. Hubungi admin.', 'err');
+          return;
+        }
+        // Pastikan dokumen users/{uid} ada dan role konsisten
+        const ref = doc(db, 'users', uid);
+        const snap = await getDoc(ref);
+        if(!snap.exists()){
+          await setDoc(ref, {
+            uid,
+            email: cred.user.email || '',
+            displayName: cred.user.displayName || '',
+            photoURL: cred.user.photoURL || '',
+            role: mappedRole,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+        }else{
+          const data = snap.data();
+          if(data.role !== mappedRole){
+            await setDoc(ref, { role: mappedRole, updatedAt: serverTimestamp() }, { merge:true });
+          }
+        }
+
+        // Redirect tegas berdasarkan mapping
+        redirectByRole(mappedRole);
+      }catch(err){
+        console.error(err);
+        // Pemetaan pesan error yang jelas
+        const code = err.code || '';
+        if(code.includes('user-not-found')) setMsg(formMsg, 'Akun tidak ditemukan. Periksa email.', 'err');
+        else if(code.includes('wrong-password')) setMsg(formMsg, 'Kata sandi salah.', 'err');
+        else if(code.includes('too-many-requests')) setMsg(formMsg, 'Terlalu banyak percobaan. Coba beberapa menit lagi.', 'err');
+        else if(code.includes('network-request-failed')) setMsg(formMsg, 'Jaringan bermasalah. Periksa koneksi internet.', 'err');
+        else setMsg(formMsg, 'Gagal masuk. Coba lagi.', 'err');
+      }finally{
+        setLoading(false);
+      }
+    });
+
+    // --- Daftarkan Service Worker (shell offline akan aktif saat file tersedia) ---
+    if('serviceWorker' in navigator){
+      window.addEventListener('load', ()=>{
+        navigator.serviceWorker.register('/service-worker.js').catch(()=>{ /* diam */ });
+      });
+    }
+  </script>
+</body>
+</html>

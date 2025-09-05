@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="id" class="no-js">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Admin · FUPA Snack</title>
+    <meta name="color-scheme" content="light dark"/>
+    <meta name="theme-color" content="#0a4dff"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js" defer></script>
+    <style>
+      :root {
+        --bg0:#e8f1ff;--bg1:#d7e6ff;--bg2:#c6dcff;--bg3:#b4d1ff;
+        --ink:#0d1b2a;--sub:#5b6b80;--panel:#fff;--border:#d5e2ff;
+        --accent:#0a4dff;--accent-2:#41a4ff;--warn:#f59e0b;--err:#e53935;
+        --radius:12px;--radius-sm:10px;--font:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+        --shadow:0 10px 30px rgba(10,77,255,.15);--speed:160ms;
+      }
+      *{box-sizing:border-box}
+      html,body{height:100%;margin:0;font:400 16px/1.5 var(--font);color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% 0%, var(--bg3),transparent 60%),
+        radial-gradient(1000px 500px at 90% 10%, var(--bg2),transparent 60%),
+        linear-gradient(180deg,var(--bg1),var(--bg0));
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;}
+      .smoke{position:fixed;inset:0;pointer-events:none;filter:blur(40px) saturate(120%);}
+      .smoke::before,.smoke::after{
+        content:"";position:absolute;inset:-20%;
+        background:
+          radial-gradient(600px 300px at 20% 30%,rgba(65,164,255,.18),transparent 60%),
+          radial-gradient(500px 260px at 80% 20%,rgba(10,77,255,.16),transparent 65%),
+          radial-gradient(700px 320px at 50% 80%,rgba(46,160,67,.12),transparent 60%);
+        animation:drift 30s infinite linear;}
+      .smoke::after{animation-direction:reverse;opacity:.9;}
+      @keyframes drift{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-2%,-1%,0) scale(1.03)}100%{transform:translate3d(0,0,0) scale(1)}}
+      .container{max-width:1120px;margin:0 auto;padding:0 16px;}
+      .skip-link{position:absolute;left:-999px;top:-999px}
+      .skip-link:focus{left:16px;top:16px;background:var(--panel);color:var(--ink);padding:8px 12px;border-radius:4px;outline:2px solid var(--accent-2);z-index:999}
+      header{position:sticky;top:0;background:transparent;backdrop-filter:saturate(120%) blur(6px);border-bottom:1px solid var(--border);z-index:5}
+      .nav{display:flex;align-items:center;justify-content:space-between;height:64px;}
+      .brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+      .brand .logo{width:32px;height:32px;border-radius:8px;background:conic-gradient(from 210deg,var(--accent),var(--accent-2),#9fd1ff,#ffffff);box-shadow:0 6px 18px rgba(10,77,255,.25),inset 0 1px 0 rgba(255,255,255,.6)}
+      .brand .name{font-weight:700;letter-spacing:.2px}
+      .nav-actions{display:flex;align-items:center;gap:12px}
+      .icon-btn{display:inline-grid;place-items:center;width:40px;height:40px;border:1px solid var(--border);border-radius:8px;background:var(--panel);cursor:pointer;transition:background var(--speed)}
+      .icon-btn:focus{outline:2px solid var(--accent-2)}
+      .badge{position:absolute;top:4px;right:4px;min-width:16px;height:16px;border-radius:8px;background:var(--err);color:#fff;font-size:11px;display:grid;place-items:center}
+      main{padding:24px 0;background:transparent;z-index:1}
+      .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+      @media(max-width:960px){.grid{grid-template-columns:1fr}}
+      .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+      .card-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+      .card-body{padding:16px;display:flex;flex-direction:column;gap:12px}
+      .title{font-size:16px;font-weight:600}
+      label{font-weight:500;margin-bottom:4px;display:block}
+      .input,.select,.textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg0);outline:none;transition:border-color var(--speed)}
+      .input:focus,.select:focus,.textarea:focus{border-color:var(--accent-2)}
+      .btn{padding:8px 12px;border:none;border-radius:6px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;transition:filter var(--speed)}
+      .btn:hover{filter:brightness(1.05)}
+      .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--border)}
+      .btn-danger{background:linear-gradient(180deg,#e53935,#b71c1c);color:#fff}
+      .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+      .table-wrap{overflow-x:auto}
+      table{width:100%;border-collapse:collapse}
+      th,td{padding:8px; border:1px solid var(--border); text-align:left}
+      th{background:var(--bg2)}
+      .filter-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+      .popover{position:absolute;top:100%;right:0;margin-top:8px;background:var(--panel);border:1px solid var(--border);border-radius:6px;box-shadow:var(--shadow);min-width:280px;display:none;z-index:10}
+      .popover.show{display:block}
+      .pop-head, .pop-footer{padding:8px 12px;border-bottom:1px solid var(--border)}
+      .pop-footer{border-top:1px solid var(--border);border-bottom:none;text-align:right}
+      .pop-body{padding:12px;max-height:60vh;overflow:auto}
+      .toast-wrap{position:fixed;right:16px;bottom:16px;display:grid;gap:8px;z-index:20}
+      .toast{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;background:#0b1f3a;color:#eaf3ff;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+      .toast.success{background:#073614}
+      .toast.error{background:#3a0b0b}
+      .tbtn{margin-left:auto;background:transparent;border:none;color:#bcd3ff;cursor:pointer}
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Loncat ke konten</a>
+    <div class="smoke" aria-hidden="true"></div>
+
+    <header>
+      <div class="container nav">
+        <a href="#" class="brand" aria-label="FUPA Admin">
+          <span class="logo" aria-hidden="true"></span>
+          <span class="name">FUPA Admin</span>
+        </a>
+        <div class="nav-actions">
+          <div style="position:relative">
+            <button id="btnNotif" class="icon-btn" aria-label="Notifikasi">
+              <iconify-icon icon="tabler:bell" width="20"></iconify-icon>
+            </button>
+            <span id="badgeNotif" class="badge" style="display:none">0</span>
+            <div id="popNotif" class="popover" role="dialog" aria-label="Notifikasi">
+              <div class="pop-head"><strong>Notifikasi</strong></div>
+              <div id="notifList" class="pop-body"><div class="row muted">Tidak ada notifikasi.</div></div>
+              <div class="pop-footer">
+                <button id="btnCloseNotif" class="btn-ghost">Tutup</button>
+              </div>
+            </div>
+          </div>
+          <div style="position:relative">
+            <button id="btnProfile" class="icon-btn" aria-label="Profil">
+              <iconify-icon icon="tabler:user-circle" width="20"></iconify-icon>
+            </button>
+            <div id="popProfile" class="popover" role="dialog" aria-label="Profil">
+              <div class="pop-head">
+                <strong>Profil Admin</strong>
+                <button id="btnCloseProfile" class="icon-btn"><iconify-icon icon="tabler:x" width="16"></iconify-icon></button>
+              </div>
+              <div class="pop-body">
+                <img id="pfp" src="" alt="Foto profil" style="width:64px;height:64px;border-radius:50%;margin-bottom:8px;object-fit:cover"/>
+                <label for="admName">Nama</label>
+                <input id="admName" class="input" />
+                <label for="admAddr" style="margin-top:8px">Alamat</label>
+                <input id="admAddr" class="input" />
+              </div>
+              <div class="pop-footer">
+                <button id="btnSaveProfile" class="btn">Simpan</button>
+                <button id="btnLogout" class="btn-danger">Keluar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="container">
+      <h1 style="margin-bottom:16px;font-size:20px;font-weight:600">Dashboard Admin</h1>
+      <div class="grid">
+        <!-- Panel kiri: Manajemen -->
+        <section class="card">
+          <div class="card-head"><span class="title">Buat Akun Karyawan</span></div>
+          <div class="card-body">
+            <label for="newEmail">Email</label>
+            <input id="newEmail" type="email" class="input" placeholder="cabang5@fupa.id"/>
+            <label for="newPwd" style="margin-top:8px">Password</label>
+            <input id="newPwd" type="password" class="input" placeholder="Minimal 6 karakter"/>
+            <button id="btnCreateUser" class="btn" style="margin-top:12px">Buat Akun</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><span class="title">Override Presensi</span></div>
+          <div class="card-body">
+            <label for="ovrType">Status Override</label>
+            <select id="ovrType" class="select">
+              <option value="wajib">Wajib Presensi</option>
+              <option value="tidak-wajib">Tidak Wajib Presensi</option>
+            </select>
+            <div class="row" style="margin-top:8px">
+              <div style="flex:1">
+                <label for="ovrStart">Mulai</label>
+                <input id="ovrStart" type="date" class="input"/>
+              </div>
+              <div style="flex:1">
+                <label for="ovrEnd">Selesai</label>
+                <input id="ovrEnd" type="date" class="input"/>
+              </div>
+            </div>
+            <label for="ovrDesc" style="margin-top:8px">Deskripsi</label>
+            <textarea id="ovrDesc" class="textarea" rows="2"></textarea>
+            <button id="btnOverride" class="btn" style="margin-top:12px">Terapkan</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><span class="title">Pengumuman</span></div>
+          <div class="card-body">
+            <label for="annText">Deskripsi</label>
+            <textarea id="annText" class="textarea" rows="3" placeholder="Isi pengumuman..."></textarea>
+            <button id="btnAnnounce" class="btn" style="margin-top:12px">Kirim Pengumuman</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><span class="title">Permintaan Cuti</span></div>
+          <div class="card-body" style="max-height:300px;overflow:auto" id="listCuti">
+            <div class="row muted">Memuat permintaan cuti...</div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Riwayat Presensi -->
+      <section class="card" style="margin-top:24px">
+        <div class="card-head">
+          <span class="title">Riwayat Presensi</span>
+        </div>
+        <div class="card-body">
+          <div class="filter-row">
+            <input id="fltName" class="input" placeholder="Filter nama"/>
+            <input id="fltStart" type="date" class="input"/>
+            <input id="fltEnd" type="date" class="input"/>
+            <button id="btnFilter" class="btn-ghost">Filter</button>
+            <button id="btnExport" class="btn">Ekspor CSV</button>
+          </div>
+          <div class="table-wrap">
+            <table id="tblPresensi">
+              <thead>
+                <tr>
+                  <th>Tanggal</th><th>Nama</th><th>Jenis</th><th>Status</th><th>Waktu</th><th>Koordinat</th><th>Foto</th><th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody><tr><td colspan="8" class="muted">Memuat data...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer style="text-align:center;padding:16px;border-top:1px solid var(--border);color:var(--sub);font-size:13px">
+      © FUPA Snack by Annisa <iconify-icon icon="mdi:heart" inline width="14" style="color:#e53935"></iconify-icon> Karomi
+    </footer>
+
+    <div id="toasts" class="toast-wrap" aria-live="polite"></div>
+
+    <script type="module">
+      /* Toast helper */
+      const toasts = document.getElementById('toasts');
+      function toast({type='info',message}) {
+        const el = document.createElement('div');
+        el.className = 'toast ' + (type==='success'?'success':type==='error'?'error':'');
+        el.innerHTML = 
+          `<iconify-icon icon="${type==='success'?'tabler:circle-check':'tabler:alert-triangle'}" width="16"></iconify-icon>
+           <div>${message}</div>
+           <button class="tbtn" aria-label="Tutup"><iconify-icon icon="tabler:x" width="14"></iconify-icon></button>`;
+        toasts.append(el);
+        el.querySelector('.tbtn').onclick = ()=>el.remove();
+        setTimeout(()=>el.remove(),4000);
+      }
+
+      /* Firebase SDK */
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+      import {
+        getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword
+      } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+      import {
+        getFirestore, doc, setDoc, updateDoc, serverTimestamp,
+        collection, addDoc, query, where, orderBy, onSnapshot, getDocs, deleteDoc
+      } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+      const cfg = {
+        apiKey:"AIzaSyCt8OGr4HlmbjdxB0cSbm3_vkzm2NA3AXU",
+        authDomain:"presensi-2bbde.firebaseapp.com",
+        projectId:"presensi-2bbde",
+        storageBucket:"presensi-2bbde.firebasestorage.app",
+        messagingSenderId:"853002288058",
+        appId:"1:853002288058:web:a276789416fecf2b733b83",
+        measurementId:"G-Y1F50VXBDD"
+      };
+      const app = initializeApp(cfg);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      /* DOM refs */
+      const btnNotif = document.getElementById('btnNotif');
+      const badgeNotif = document.getElementById('badgeNotif');
+      const popNotif = document.getElementById('popNotif');
+      const notifList = document.getElementById('notifList');
+      const btnCloseNotif = document.getElementById('btnCloseNotif');
+
+      const btnProfile = document.getElementById('btnProfile');
+      const popProfile = document.getElementById('popProfile');
+      const btnCloseProfile = document.getElementById('btnCloseProfile');
+      const pfp = document.getElementById('pfp');
+      const admName = document.getElementById('admName');
+      const admAddr = document.getElementById('admAddr');
+      const btnSaveProfile = document.getElementById('btnSaveProfile');
+      const btnLogout = document.getElementById('btnLogout');
+
+      const newEmail = document.getElementById('newEmail');
+      const newPwd = document.getElementById('newPwd');
+      const btnCreateUser = document.getElementById('btnCreateUser');
+
+      const ovrType = document.getElementById('ovrType');
+      const ovrStart = document.getElementById('ovrStart');
+      const ovrEnd = document.getElementById('ovrEnd');
+      const ovrDesc = document.getElementById('ovrDesc');
+      const btnOverride = document.getElementById('btnOverride');
+
+      const annText = document.getElementById('annText');
+      const btnAnnounce = document.getElementById('btnAnnounce');
+
+      const listCuti = document.getElementById('listCuti');
+
+      const fltName = document.getElementById('fltName');
+      const fltStart = document.getElementById('fltStart');
+      const fltEnd = document.getElementById('fltEnd');
+      const btnFilter = document.getElementById('btnFilter');
+      const btnExport = document.getElementById('btnExport');
+      const tblPresensi = document.getElementById('tblPresensi').tBodies[0];
+
+      let me, uid, unsubNotif, unsubCuti, allPresensi=[];
+
+      /* Notif in-app for admin (all 'admin_broadcast') */
+      function listenAdminNotif(){
+        const q = query(collection(db,'notifications'), where('uid','==','admin_broadcast'), orderBy('createdAt','desc'));
+        unsubNotif = onSnapshot(q,snap=>{
+          const items=[]; let unread=0;
+          snap.forEach(d=>{
+            const n=d.data();
+            if(!n.read) unread++;
+            items.push({id:d.id,...n});
+          });
+          badgeNotif.style.display = unread?'grid':'none';
+          badgeNotif.textContent = unread;
+          notifList.innerHTML = items.length?'':'<div class="row muted">Tidak ada notifikasi.</div>';
+          items.forEach(n=>{
+            const div=document.createElement('div');
+            div.className='row';
+            div.innerHTML=`
+              <div style="flex:1"><strong>${n.title}</strong><div class="muted">${n.message}</div></div>
+              <button data-id="${n.id}" class="btn-ghost act-read"><iconify-icon icon="tabler:check" width="14"></iconify-icon></button>
+              <button data-id="${n.id}" class="btn-ghost act-del"><iconify-icon icon="tabler:trash" width="14"></iconify-icon></button>
+            `;
+            notifList.append(div);
+          });
+          notifList.querySelectorAll('.act-read').forEach(b=>b.onclick=()=>updateDoc(doc(db,'notifications',b.dataset.id),{read:true}));
+          notifList.querySelectorAll('.act-del').forEach(b=>b.onclick=()=>deleteDoc(doc(db,'notifications',b.dataset.id)));
+        });
+      }
+      btnNotif.onclick=()=>popNotif.classList.toggle('show');
+      btnCloseNotif.onclick=()=>popNotif.classList.remove('show');
+
+      /* Profile admin */
+      btnProfile.onclick=()=>popProfile.classList.toggle('show');
+      btnCloseProfile.onclick=()=>popProfile.classList.remove('show');
+      btnSaveProfile.onclick=async()=>{
+        await updateDoc(doc(db,'users',uid),{name:admName.value,address:admAddr.value,updatedAt:serverTimestamp()});
+        toast({type:'success',message:'Profil disimpan.'});
+      };
+      btnLogout.onclick=async()=>{await signOut(auth);location.replace('/index.html');};
+
+      /* Buat akun karyawan */
+      btnCreateUser.onclick=async()=>{
+        const email=newEmail.value.trim(), pwd=newPwd.value;
+        if(!/.+@.+\..+/.test(email)){toast({type:'error',message:'Email tidak valid.'});return;}
+        if(pwd.length<6){toast({type:'error',message:'Password minimal 6 karakter.'});return;}
+        try{
+          const cred=await createUserWithEmailAndPassword(auth,email,pwd);
+          await setDoc(doc(db,'users',cred.user.uid),{
+            uid:cred.user.uid,email,role:'karyawan',
+            name:email.split('@')[0],photoURL:`https://api.dicebear.com/8.x/initials/svg?seed=${encodeURIComponent(email)}`,
+            createdAt:serverTimestamp(),updatedAt:serverTimestamp(),address:'',statusOverride:null
+          });
+          toast({type:'success',message:'Akun karyawan dibuat: UID ' + cred.user.uid});
+          newEmail.value='';newPwd.value='';
+        }catch(e){console.error(e);toast({type:'error',message:'Gagal buat akun.'});}
+      };
+
+      /* Override presensi */
+      btnOverride.onclick=async()=>{
+        if(!ovrStart.value){toast({type:'error',message:'Pilih tanggal mulai.'});return;}
+        const start=ovrStart.value,end=ovrEnd.value||ovrStart.value;
+        const type=ovrType.value, desc=ovrDesc.value.trim();
+        const all=await getDocs(query(collection(db,'users'),where('role','==','karyawan')));
+        const batch=all.docs.map(d=>updateDoc(doc(db,'users',d.id),{statusOverride:type,updatedAt:serverTimestamp()}));
+        await Promise.all(batch);
+        toast({type:'success',message:'Override diterapkan ('+type+')'});
+      };
+
+      /* Pengumuman */
+      btnAnnounce.onclick=async()=>{
+        const msg=annText.value.trim();
+        if(!msg){toast({type:'error',message:'Isi pengumuman.'});return;}
+        await addDoc(collection(db,'notifications'),{
+          uid:'admin_broadcast',title:'Pengumuman',message:msg,
+          createdAt:serverTimestamp(),read:false,link:'/karyawan.html'
+        });
+        toast({type:'success',message:'Pengumuman dikirim.'});
+        annText.value='';
+      };
+
+      /* List permintaan cuti */
+      function listenCuti(){
+        unsubCuti=onSnapshot(collection(db,'cutiRequests'),snap=>{
+          listCuti.innerHTML='';
+          if(snap.empty){listCuti.innerHTML='<div class="row muted">Tidak ada permintaan.</div>';return;}
+          snap.forEach(d=>{
+            const c=d.data();
+            const div=document.createElement('div');
+            div.className='card-body';
+            div.innerHTML=`
+              <div class="row">
+                <div style="flex:1">
+                  <strong>${c.name}</strong> (${c.jenis})<br>
+                  ${c.start} → ${c.end}<br>
+                  <div class="muted">${c.reason}</div>
+                </div>
+                <div class="row">
+                  <button data-id="${d.id}" data-uid="${c.uid}" class="btn-success btn act-acc">✔</button>
+                  <button data-id="${d.id}" class="btn-danger btn act-rej">✖</button>
+                </div>
+              </div>`;
+            listCuti.append(div);
+          });
+          listCuti.querySelectorAll('.act-acc').forEach(b=>b.onclick=async()=>{
+            const id=b.dataset.id, uidK=b.dataset.uid;
+            await updateDoc(doc(db,'cutiRequests',id),{status:'approved'});
+            const key=uidK+'_'+b.dataset.id+'_cuti';
+            await setDoc(doc(db,'presensi',key),{
+              key,dateISO:b.dataset.id,jenis:'cuti',status:'cuti',
+              waktuServer:serverTimestamp(),coords:null,photoURL:null,public_id:null,name:'',email:''
+            });
+            await addDoc(collection(db,'notifications'),{uid:uidK,title:'Cuti disetujui',message:'Permintaan cuti anda disetujui',createdAt:serverTimestamp(),read:false});
+            toast({type:'success',message:'Cuti disetujui.'});
+          });
+          listCuti.querySelectorAll('.act-rej').forEach(b=>b.onclick=async()=>{
+            await updateDoc(doc(db,'cutiRequests',b.dataset.id),{status:'rejected'});
+            const c= (await getDocs(query(collection(db,'cutiRequests'),where('__name__','==',b.dataset.id)))).docs[0].data();
+            await addDoc(collection(db,'notifications'),{uid:c.uid,title:'Cuti ditolak',message:'Permintaan cuti ditolak',createdAt:serverTimestamp(),read:false});
+            toast({type:'success',message:'Cuti ditolak.'});
+          });
+        });
+      }
+
+      /* Riwayat presensi */
+      async function loadAllPresensi(){
+        const snap = await getDocs(collection(db,'presensi'));
+        allPresensi = snap.docs.map(d=>d.data());
+        renderPresensi(allPresensi);
+      }
+      function renderPresensi(data){
+        tblPresensi.innerHTML = '';
+        if(!data.length){
+          tblPresensi.innerHTML = '<tr><td colspan="8" class="muted">Tidak ada data.</td></tr>';
+          return;
+        }
+        data.forEach(p=>{
+          const tr=document.createElement('tr');
+          tr.innerHTML=`
+            <td>${p.dateISO}</td>
+            <td>${p.name||p.email}</td>
+            <td>${p.jenis}</td>
+            <td>${p.status}</td>
+            <td>${new Date(p.waktuServer.toDate()).toLocaleTimeString()}</td>
+            <td>${p.coords?`${p.coords.latitude.toFixed(5)},${p.coords.longitude.toFixed(5)}`:'-'}</td>
+            <td><a href="${p.photoURL}" target="_blank"><iconify-icon icon="tabler:photo" width="16"></iconify-icon></a></td>
+            <td><button data-key="${p.key}" class="btn-ghost btn act-del"><iconify-icon icon="tabler:trash" width="16"></iconify-icon></button></td>`;
+          tblPresensi.append(tr);
+        });
+        tblPresensi.querySelectorAll('.act-del').forEach(b=>b.onclick=async()=>{
+          if(!confirm('Hapus entri ini?'))return;
+          await deleteDoc(doc(db,'presensi',b.dataset.key));
+          toast({type:'success',message:'Entri dihapus.'});
+          loadAllPresensi();
+        });
+      }
+      btnFilter.onclick=()=> {
+        const nm=fltName.value.trim().toLowerCase();
+        const s=fltStart.value, e=fltEnd.value;
+        const filtered = allPresensi.filter(p=>{
+          const matchName = nm? p.name.toLowerCase().includes(nm):true;
+          const matchDate = (s? p.dateISO>=s:true) && (e? p.dateISO<=e:true);
+          return matchName && matchDate;
+        });
+        renderPresensi(filtered);
+      };
+      btnExport.onclick=()=>{
+        const rows = [['Tanggal','Nama','Jenis','Status','Waktu','Koordinat']];
+        allPresensi.forEach(p=>{
+          rows.push([p.dateISO,p.name,p.jenis,p.status,
+            new Date(p.waktuServer.toDate()).toLocaleTimeString(),
+            p.coords?`${p.coords.latitude},${p.coords.longitude}`:'-'
+          ]);
+        });
+        const csv = rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+        const a=document.createElement('a');
+        a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+        a.download = 'presensi.csv';
+        a.click();
+      };
+
+      /* Auth & init */
+      onAuthStateChanged(auth, async user=>{
+        if(!user){location.replace('/index.html');return;}
+        uid=user.uid;
+        // load admin profile
+        const snap = await getDocs(query(collection(db,'users'),where('uid','==',uid)));
+        me = snap.docs[0]?.data()||{};
+        pfp.src = me.photoURL;
+        admName.value = me.name;
+        admAddr.value = me.address||'';
+        // init listeners
+        listenAdminNotif();
+        listenCuti();
+        loadAllPresensi();
+      });
+      /* Close popovers on outside click */
+      document.addEventListener('click', e => {
+        if (!btnProfile.contains(e.target) && !popProfile.contains(e.target)) popProfile.classList.remove('show');
+        if (!btnNotif.contains(e.target)    && !popNotif.contains(e.target))    popNotif.classList.remove('show');
+      });
+
+    </script>
+  </body>
+</html>

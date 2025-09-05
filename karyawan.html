@@ -1,0 +1,1377 @@
+<!doctype html>
+<html lang="id" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Karyawan · FUPA Snack</title>
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#0a4dff" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js" defer></script>
+    <style>
+      :root{
+        --bg0:#e8f1ff; --bg1:#d7e6ff; --bg2:#c6dcff; --bg3:#b4d1ff;
+        --ink:#0d1b2a; --sub:#5b6b80;
+        --panel:#ffffff; --elev:#f7faff; --border:#d5e2ff;
+        --accent:#0a4dff; --accent-2:#41a4ff; --accent-ink:#071a43;
+        --ok:#2ea043; --warn:#f59e0b; --err:#e53935;
+        --shadow:0 10px 30px rgba(10,77,255,.15);
+        --radius:14px; --radius-sm:12px; --radius-xs:10px;
+        --font:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+        --speed:160ms;
+      }
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{
+        margin:0;color:var(--ink);font:400 15.5px/1.55 var(--font);
+        background: radial-gradient(1200px 600px at 10% 0%, var(--bg3), transparent 60%),
+                    radial-gradient(1000px 500px at 90% 10%, var(--bg2), transparent 60%),
+                    linear-gradient(180deg, var(--bg1), var(--bg0));
+        -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+        overflow-x:hidden;
+      }
+      .smoke{position:fixed;inset:0;z-index:0;pointer-events:none;filter:blur(40px) saturate(120%)}
+      .smoke::before,.smoke::after{
+        content:"";position:absolute;inset:-20%;
+        background:
+          radial-gradient(600px 300px at 20% 30%, rgba(65,164,255,.18), transparent 60%),
+          radial-gradient(500px 260px at 80% 20%, rgba(10,77,255,.16), transparent 65%),
+          radial-gradient(700px 320px at 50% 80%, rgba(46,160,67,.12), transparent 60%);
+        animation:drift 24s infinite linear;
+      }
+      .smoke::after{animation-duration:34s;animation-direction:reverse;opacity:.9}
+      @keyframes drift{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-2%,-1%,0) scale(1.03)}100%{transform:translate3d(0,0,0) scale(1)}}
+      .container{max-width:1120px;margin:0 auto;padding:0 16px}
+      .skip-link{position:absolute;left:-999px;top:-999px}
+      .skip-link:focus{left:16px;top:16px;background:var(--panel);color:var(--ink);padding:8px 12px;border-radius:var(--radius-xs);outline:2px solid var(--accent-2);z-index:999}
+
+      header{position:sticky;top:0;z-index:5;background:transparent;backdrop-filter:saturate(120%) blur(6px);border-bottom:1px solid var(--border)}
+      .nav{display:flex;align-items:center;justify-content:space-between;gap:12px;height:66px}
+      .brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
+      .brand .logo{width:32px;height:32px;display:inline-grid;place-items:center;border-radius:9px;background:conic-gradient(from 210deg, var(--accent), var(--accent-2), #9fd1ff, #ffffff);box-shadow:0 6px 18px rgba(10,77,255,.25), inset 0 1px 0 rgba(255,255,255,.6)}
+      .brand .name{font-weight:700;letter-spacing:.2px}
+      .nav-actions{display:flex;align-items:center;gap:10px}
+      .icon-btn{display:inline-grid;place-items:center;height:38px;width:42px;border:1px solid var(--border);border-radius:11px;background:linear-gradient(180deg,#fff,#f4f7ff);color:#36547e;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 4px 12px rgba(0,0,0,.06)}
+      .icon-btn:focus{outline:2px solid var(--accent-2)}
+      .badge{min-width:18px;height:18px;border-radius:9px;background:var(--err);color:#fff;font-size:11px;display:inline-grid;place-items:center;position:absolute;top:-4px;right:-4px;border:2px solid #fff}
+      .icon-wrap{position:relative;display:inline-block}
+
+      main{position:relative;z-index:1;padding:18px 0 28px}
+      .grid{display:grid;grid-template-columns: 320px 1fr;gap:16px}
+      @media (max-width:980px){.grid{grid-template-columns:1fr}}
+
+      .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+      .card-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+      .card-body{padding:14px 16px}
+      .title{font-size:16px;font-weight:700}
+      .muted{color:var(--sub);font-size:13px}
+
+      .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+      .btn{
+        display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid color-mix(in oklab, var(--accent) 40%, var(--border));border-radius:12px;
+        background:linear-gradient(180deg,var(--accent), color-mix(in oklab, var(--accent) 75%, #002f9f)); color:#fff;font-weight:700;cursor:pointer;
+        box-shadow:0 8px 20px rgba(10,77,255,.28), inset 0 1px 0 rgba(255,255,255,.35); transition:transform 80ms ease, filter var(--speed)
+      }
+      .btn:hover{filter:brightness(1.02)} .btn:active{transform:translateY(1px)} .btn[disabled]{opacity:.7;cursor:not-allowed}
+      .btn-ghost{background:linear-gradient(180deg,#fff,#f4f7ff);color:var(--ink);border:1px solid var(--border);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 4px 12px rgba(0,0,0,.06)}
+      .btn-danger{background:linear-gradient(180deg,#ff4d4f,#c62828);border-color:#ff8a80}
+
+      .input, .select, .text{
+        width:100%;padding:10px 12px;background:var(--elev);color:var(--ink);border:1px solid var(--border);border-radius:12px;outline:none;
+        transition:border-color var(--speed), box-shadow var(--speed);
+      }
+      .input:focus, .select:focus, .text:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px color-mix(in oklab, var(--accent-2) 22%, transparent)}
+      label{font-weight:600;display:block;margin:0 0 6px}
+      .help{color:var(--sub);font-size:12px;margin-top:6px}
+      .error{color:var(--err);font-size:13px;margin-top:6px}
+
+      .status-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:linear-gradient(180deg,#fff,#f6f9ff)}
+      .chip-ok{color:#146c2e;border-color:#a9e3b8;background:linear-gradient(180deg,#eafff1,#f6fff9)}
+      .chip-warn{color:#8a5b00;border-color:#f7d9a8;background:linear-gradient(180deg,#fff6e5,#fffaf0)}
+      .chip-err{color:#7a1414;border-color:#f2b0b0;background:linear-gradient(180deg,#ffeeee,#fff6f6)}
+
+      .media{display:grid;grid-template-columns: 1fr; gap:12px}
+      .preview{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:#000}
+      video, canvas{width:100%;height:auto;display:block}
+      .preview-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+      .list{display:grid;gap:10px}
+      .item{display:grid;grid-template-columns: 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:linear-gradient(180deg,#fff,#f6f9ff)}
+      .meta{display:flex;gap:12px;flex-wrap:wrap;color:var(--sub);font-size:13px}
+
+      .toast-wrap{position:fixed;right:16px;bottom:16px;display:grid;gap:10px;z-index:20}
+      .toast{display:flex;align-items:center;gap:10px;min-width:260px;max-width:420px;background:#0b1f3a;color:#eaf3ff;border:1px solid #1d3f74;border-radius:12px;padding:10px 12px;box-shadow:0 12px 30px rgba(0,0,0,.2)}
+      .toast.success{background:#073614;border-color:#0e6a2b}
+      .toast.error{background:#3a0b0b;border-color:#742c2c}
+      .toast .tmsg{flex:1}
+      .toast .tbtn{background:transparent;border:0;color:#bcd3ff;cursor:pointer}
+
+      /* Popover */
+      .popover{position:absolute;top:100%;right:0;margin-top:10px;background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);min-width:300px;display:none;z-index:10}
+      .popover.show{display:block}
+      .pop-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border)}
+      .pop-body{padding:10px 12px;max-height:60vh;overflow:auto}
+      .pop-footer{padding:10px 12px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+
+      .fab{position:fixed;right:18px;bottom:18px;z-index:10}
+      .fab .btn{border-radius:999px;padding:12px 16px}
+
+      footer{margin-top:24px;border-top:1px solid var(--border)}
+      .foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;color:var(--sub);font-size:13px;flex-wrap:wrap}
+
+      .skeleton{position:relative;overflow:hidden;background:linear-gradient(90deg,#eff5ff 25%,#f7fbff 37%,#eff5ff 63%);background-size:400% 100%;animation:shimmer 1.25s infinite}
+      @keyframes shimmer{0%{background-position:100% 0}100%{background-position:0 0}}
+      .hide{display:none!important}
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Loncat ke konten</a>
+    <div class="smoke" aria-hidden="true"></div>
+
+    <header>
+      <div class="container nav">
+        <a href="#" class="brand" aria-label="FUPA Snack">
+          <span class="logo" aria-hidden="true"></span>
+          <span class="name">FUPA Snack</span>
+        </a>
+        <div class="nav-actions">
+          <div class="icon-wrap">
+            <button id="btnNotif" class="icon-btn" aria-label="Notifikasi">
+              <iconify-icon icon="tabler:bell" width="22"></iconify-icon>
+            </button>
+            <span id="badgeNotif" class="badge" style="display:none">0</span>
+            <div id="popNotif" class="popover" role="dialog" aria-label="Notifikasi">
+              <div class="pop-head">
+                <strong>Notifikasi</strong>
+                <button id="btnClearNotif" class="icon-btn" title="Tandai semua dibaca">
+                  <iconify-icon icon="tabler:check" width="18"></iconify-icon>
+                </button>
+              </div>
+              <div id="notifList" class="pop-body">
+                <div class="muted">Tidak ada notifikasi.</div>
+              </div>
+              <div class="pop-footer">
+                <button id="btnCloseNotif" class="btn-ghost">Tutup</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="icon-wrap">
+            <button id="btnProfile" class="icon-btn" aria-label="Profil">
+              <iconify-icon icon="tabler:user-circle" width="22"></iconify-icon>
+            </button>
+            <div id="popProfile" class="popover" role="dialog" aria-label="Profil">
+              <div class="pop-head">
+                <strong>Profil</strong>
+                <button id="btnCloseProfile" class="icon-btn" title="Tutup">
+                  <iconify-icon icon="tabler:x" width="18"></iconify-icon>
+                </button>
+              </div>
+              <div class="pop-body">
+                <div class="row" style="align-items:flex-start">
+                  <img id="pfp" src="" alt="Foto profil" style="width:64px;height:64px;border-radius:12px;border:1px solid var(--border);object-fit:cover;background:#fff" />
+                  <div style="flex:1;min-width:180px">
+                    <label for="name">Nama</label>
+                    <input id="name" class="input" placeholder="Nama Anda" />
+                    <label for="addr" style="margin-top:8px">Alamat</label>
+                    <input id="addr" class="input" placeholder="Alamat" />
+                    <div class="help">Perbarui data lalu simpan.</div>
+                  </div>
+                </div>
+                <div class="row" style="margin-top:10px">
+                  <input id="pfpFile" type="file" accept="image/*" class="hide" />
+                  <button id="btnPickPfp" class="btn-ghost">
+                    <iconify-icon icon="tabler:photo" width="18"></iconify-icon>
+                    <span>Ganti Foto</span>
+                  </button>
+                  <button id="btnSaveProfile" class="btn">
+                    <iconify-icon icon="tabler:device-floppy" width="18"></iconify-icon>
+                    <span>Simpan</span>
+                  </button>
+                  <button id="btnLogout" class="btn-danger">
+                    <iconify-icon icon="tabler:logout" width="18"></iconify-icon>
+                    <span>Keluar</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <div class="container grid">
+        <!-- Panel kiri: Presensi -->
+        <section class="card">
+          <div class="card-head">
+            <div class="title">Presensi</div>
+            <div id="statusChip" class="status-chip">
+              <iconify-icon icon="tabler:clock-hour-4" width="16"></iconify-icon>
+              <span id="statusText">Memuat status...</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div>
+                <div class="muted">Waktu server</div>
+                <div id="serverTime" style="font-weight:700">--:--:--</div>
+              </div>
+              <div>
+                <div class="muted">Tanggal</div>
+                <div id="serverDate" style="font-weight:700">--</div>
+              </div>
+            </div>
+
+            <div style="margin-top:12px">
+              <label>Koordinat</label>
+              <div class="row">
+                <div id="coordsText" class="status-chip">
+                  <iconify-icon icon="tabler:map-pin" width="16"></iconify-icon>
+                  <span>Menentukan lokasi...</span>
+                </div>
+                <button id="btnRefreshLoc" class="btn-ghost">
+                  <iconify-icon icon="tabler:target" width="18"></iconify-icon>
+                  <span>Sesuaikan</span>
+                </button>
+              </div>
+              <div class="help">Klik Sesuaikan untuk memperbarui lokasi.</div>
+            </div>
+
+            <div style="margin-top:12px">
+              <label for="jenis">Jenis Presensi</label>
+              <select id="jenis" class="select">
+                <option value="berangkat">Berangkat</option>
+                <option value="pulang">Pulang</option>
+              </select>
+            </div>
+
+            <div class="media" style="margin-top:12px">
+              <div class="preview">
+                <video id="video" playsinline autoplay muted></video>
+                <canvas id="canvas" class="hide"></canvas>
+              </div>
+              <div class="preview-actions">
+                <button id="btnStartCam" class="btn-ghost">
+                  <iconify-icon icon="tabler:video" width="18"></iconify-icon>
+                  <span>Aktifkan Kamera</span>
+                </button>
+                <button id="btnCapture" class="btn" disabled>
+                  <iconify-icon icon="tabler:camera" width="18"></iconify-icon>
+                  <span>Ambil Foto</span>
+                </button>
+                <button id="btnRetake" class="btn-ghost" disabled>
+                  <iconify-icon icon="tabler:arrow-back-up" width="18"></iconify-icon>
+                  <span>Ulangi</span>
+                </button>
+              </div>
+              <div class="help" id="camHelp">Pastikan memberi izin kamera. Jika ditolak, buka pengaturan browser untuk mengizinkan.</div>
+              <div id="camErr" class="error" hidden></div>
+            </div>
+
+            <div class="row" style="margin-top:12px">
+              <button id="btnSimpan" class="btn" disabled>
+                <iconify-icon icon="tabler:device-floppy" width="18"></iconify-icon>
+                <span>Simpan Presensi</span>
+              </button>
+              <div id="saveHint" class="help">Ambil foto & pastikan dalam waktu yang diperbolehkan.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel kanan: Info + Riwayat -->
+        <section class="card">
+          <div class="card-head">
+            <div class="title">Info Akun</div>
+          </div>
+          <div class="card-body">
+            <div class="row" style="align-items:flex-start">
+              <img id="infoPfp" src="" alt="Foto profil" style="width:60px;height:60px;border-radius:12px;border:1px solid var(--border);object-fit:cover;background:#fff" />
+              <div style="flex:1;min-width:200px">
+                <div style="font-weight:700" id="infoName">-</div>
+                <div class="muted" id="infoEmail">-</div>
+                <div class="muted" id="infoAddr">Alamat: -</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-head">
+            <div class="title">Riwayat Presensi</div>
+            <div class="muted">Realtime</div>
+          </div>
+          <div class="card-body">
+            <div id="listPresensi" class="list">
+              <div class="item">
+                <div class="muted">Memuat riwayat...</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="fab">
+        <button id="btnCuti" class="btn">
+          <iconify-icon icon="tabler:calendar-plus" width="18"></iconify-icon>
+          <span>Ajukan Cuti</span>
+        </button>
+      </div>
+
+      <!-- Popup Cuti -->
+      <div id="popCuti" class="popover" style="right:18px;bottom:76px;top:auto;">
+        <div class="pop-head">
+          <strong>Form Cuti</strong>
+          <button id="btnCloseCuti" class="icon-btn">
+            <iconify-icon icon="tabler:x" width="18"></iconify-icon>
+          </button>
+        </div>
+        <div class="pop-body">
+          <label for="cutiJenis">Jenis</label>
+          <select id="cutiJenis" class="select">
+            <option value="izin">Izin</option>
+            <option value="sakit">Sakit</option>
+            <option value="cuti">Cuti</option>
+          </select>
+          <div class="row" style="margin-top:8px">
+            <div style="flex:1">
+              <label for="cutiStart">Mulai</label>
+              <input id="cutiStart" type="date" class="input" />
+            </div>
+            <div style="flex:1">
+              <label for="cutiEnd">Selesai</label>
+              <input id="cutiEnd" type="date" class="input" />
+            </div>
+          </div>
+          <label for="cutiReason" style="margin-top:8px">Alasan</label>
+          <textarea id="cutiReason" rows="3" class="text" placeholder="Jelaskan alasan"></textarea>
+          <div id="cutiErr" class="error" hidden></div>
+        </div>
+        <div class="pop-footer">
+          <button id="btnSubmitCuti" class="btn">
+            <iconify-icon icon="tabler:send" width="18"></iconify-icon>
+            <span>Kirim</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container foot">
+        <div class="muted">© Fupa Snack by Annisa & Karomi</div>
+        <div class="muted">Build responsif, cepat, dan andal.</div>
+      </div>
+    </footer>
+
+    <div class="toast-wrap" id="toasts" aria-live="polite" aria-atomic="true"></div>
+
+    <script type="module">
+      // Toast
+      const toasts = document.getElementById('toasts');
+      function toast({type='info', message=''}) {
+        const el = document.createElement('div');
+        el.className = 'toast ' + (type==='success' ? 'success' : type==='error' ? 'error' : '');
+        el.innerHTML = \`
+          <iconify-icon icon="\${type==='success'?'tabler:circle-check':type==='error'?'tabler:alert-triangle':'tabler:info-circle'}" width="18" aria-hidden="true"></iconify-icon>
+          <div class="tmsg">\${message}</div>
+          <button class="tbtn" aria-label="Tutup"><iconify-icon icon="tabler:x" width="16"></iconify-icon></button>\`;
+        toasts.appendChild(el);
+        const close=()=>el.remove();
+        el.querySelector('.tbtn').addEventListener('click', close);
+        setTimeout(close, 5000);
+      }
+
+      // Firebase
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+      import {
+        getAuth, onAuthStateChanged, signOut
+      } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+      import {
+        getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp,
+        collection, query, where, orderBy, onSnapshot, getDocs, addDoc, deleteDoc
+      } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCt8OGr4HlmbjdxB0cSbm3_vkzm2NA3AXU",
+        authDomain: "presensi-2bbde.firebaseapp.com",
+        projectId: "presensi-2bbde",
+        storageBucket: "presensi-2bbde.firebasestorage.app",
+        messagingSenderId: "853002288058",
+        appId: "1:853002288058:web:a276789416fecf2b733b83",
+        measurementId: "G-Y1F50VXBDD"
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // Cloudinary
+      const CLOUD_NAME = "dn2o2vf04";
+      const UPLOAD_PRESET = "presensi_unsigned";
+      const CLOUD_URL = \`https://api.cloudinary.com/v1_1/\${CLOUD_NAME}/image/upload\`;
+
+      // DOM
+      const infoPfp = document.getElementById('infoPfp');
+      const infoName = document.getElementById('infoName');
+      const infoEmail = document.getElementById('infoEmail');
+      const infoAddr = document.getElementById('infoAddr');
+      const statusChip = document.getElementById('statusChip');
+      const statusText = document.getElementById('statusText');
+      const serverTimeEl = document.getElementById('serverTime');
+      const serverDateEl = document.getElementById('serverDate');
+      const coordsText = document.getElementById('coordsText');
+      const btnRefreshLoc = document.getElementById('btnRefreshLoc');
+      const jenisEl = document.getElementById('jenis');
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const btnStartCam = document.getElementById('btnStartCam');
+      const btnCapture = document.getElementById('btnCapture');
+      const btnRetake = document.getElementById('btnRetake');
+      const camHelp = document.getElementById('camHelp');
+      const camErr = document.getElementById('camErr');
+      const btnSimpan = document.getElementById('btnSimpan');
+      const saveHint = document.getElementById('saveHint');
+      const listPresensi = document.getElementById('listPresensi');
+
+      const btnNotif = document.getElementById('btnNotif');
+      const popNotif = document.getElementById('popNotif');
+      const btnClearNotif = document.getElementById('btnClearNotif');
+      const btnCloseNotif = document.getElementById('btnCloseNotif');
+      const notifList = document.getElementById('notifList');
+      const badgeNotif = document.getElementById('badgeNotif');
+
+      const btnProfile = document.getElementById('btnProfile');
+      const popProfile = document.getElementById('popProfile');
+      const btnCloseProfile = document.getElementById('btnCloseProfile');
+      const pfp = document.getElementById('pfp');
+      const nameEl = document.getElementById('name');
+      const addrEl = document.getElementById('addr');
+      const pfpFile = document.getElementById('pfpFile');
+      const btnPickPfp = document.getElementById('btnPickPfp');
+      const btnSaveProfile = document.getElementById('btnSaveProfile');
+      const btnLogout = document.getElementById('btnLogout');
+
+      const btnCuti = document.getElementById('btnCuti');
+      const popCuti = document.getElementById('popCuti');
+      const btnCloseCuti = document.getElementById('btnCloseCuti');
+      const cutiJenis = document.getElementById('cutiJenis');
+      const cutiStart = document.getElementById('cutiStart');
+      const cutiEnd = document.getElementById('cutiEnd');
+      const cutiReason = document.getElementById('cutiReason');
+      const btnSubmitCuti = document.getElementById('btnSubmitCuti');
+      const cutiErr = document.getElementById('cutiErr');
+
+      // Global state
+      let me = null; // users/{uid} data
+      let uid = null;
+      let coords = null;
+      let stream = null;
+      let capturedBlob = null;
+      let capturedDataURL = null;
+      let unsubscribePresensi = null;
+      let unsubscribeNotif = null;
+
+      // Utils
+      const fmtTime = (d)=> d.toLocaleTimeString('id-ID',{hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const fmtDate = (d)=> d.toLocaleDateString('id-ID',{weekday:'long', year:'numeric', month:'long', day:'numeric'});
+      const pad2 = (n)=> String(n).padStart(2,'0');
+      const isoDate = (d)=> \`\${d.getFullYear()}-\${pad2(d.getMonth()+1)}-\${pad2(d.getDate())}\`;
+      const isSunday = (d)=> d.getDay() === 0;
+
+      function setStatusChip(kind, text){
+        statusText.textContent = text;
+        statusChip.classList.remove('chip-ok','chip-warn','chip-err');
+        if (kind==='ok') statusChip.classList.add('chip-ok');
+        else if (kind==='warn') statusChip.classList.add('chip-warn');
+        else if (kind==='err') statusChip.classList.add('chip-err');
+      }
+
+      // Waktu presensi + toleransi
+      function getWindows(today){
+        const base = {
+          berangkat: { start: "04:30", end: "05:30" },
+          pulang: { start: "10:00", end: "11:00" }
+        };
+        const tolMin = 30; // menit
+        function parseHM(hm){ const [h,m]=hm.split(':').map(Number); const t=new Date(today); t.setHours(h,m,0,0); return t; }
+        function addMin(t, m){ const d=new Date(t); d.setMinutes(d.getMinutes()+m); return d; }
+        const bStart = parseHM(base.berangkat.start);
+        const bEnd = parseHM(base.berangkat.end);
+        const bTol = addMin(bEnd, tolMin);
+
+        const pStart = parseHM(base.pulang.start);
+        const pEnd = parseHM(base.pulang.end);
+        const pTol = addMin(pEnd, tolMin);
+
+        return {
+          berangkat: { start:bStart, end:bEnd, tol:bTol },
+          pulang: { start:pStart, end:pEnd, tol:pTol }
+        };
+      }
+
+      function computeStatus(now, jenis, override){
+        if (override === 'tidak-wajib') return { kind:'warn', text:'Tidak wajib presensi (override admin)' };
+        if (isSunday(now) && override!=='wajib') return { kind:'warn', text:'Hari Minggu: Non-presensi' };
+        const win = getWindows(now)[jenis];
+        if (now < win.start) return { kind:'warn', text:'Di luar waktu presensi (belum mulai)' };
+        if (now >= win.start && now <= win.end) return { kind:'ok', text:'Waktunya presensi (tepat waktu)' };
+        if (now > win.end && now <= win.tol) return { kind:'warn', text:'Waktunya presensi (toleransi keterlambatan)' };
+        return { kind:'err', text:'Di luar waktu presensi (lewat toleransi)' };
+      }
+
+      function statusLabel(now, jenis){
+        const win = getWindows(now)[jenis];
+        if (now >= win.start && now <= win.end) return 'tepat';
+        if (now > win.end && now <= win.tol) return 'terlambat';
+        return 'alpa';
+      }
+
+      // Geolokasi
+      function showCoords(){
+        const t = coords ? \`\${coords.latitude.toFixed(6)}, \${coords.longitude.toFixed(6)}\` : 'Lokasi belum tersedia';
+        coordsText.querySelector('span').textContent = t;
+      }
+      function refreshLocation(){
+        return new Promise((resolve)=>{
+          if (!navigator.geolocation){
+            toast({type:'error', message:'Geolokasi tidak didukung.'}); return resolve(null);
+          }
+          navigator.geolocation.getCurrentPosition(pos=>{
+            coords = { latitude: pos.coords.latitude, longitude: pos.coords.longitude, accuracy: pos.coords.accuracy };
+            showCoords(); resolve(coords);
+          }, err=>{
+            toast({type:'error', message:'Izin lokasi ditolak. Buka pengaturan browser untuk mengizinkan.'});
+            resolve(null);
+          }, { enableHighAccuracy:true, timeout:10000, maximumAge:0 });
+        });
+      }
+
+      // Kamera & kompresi
+      async function startCamera(){
+        try{
+          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode:'user', width:{ideal:640}, height:{ideal:480} }, audio:false });
+          video.srcObject = stream;
+          btnCapture.disabled = false;
+          btnRetake.disabled = true;
+          canvas.classList.add('hide');
+          video.classList.remove('hide');
+          camErr.hidden = true;
+        }catch(e){
+          camErr.textContent = 'Gagal mengakses kamera. Izinkan kamera di browser Anda.';
+          camErr.hidden = false;
+        }
+      }
+      function stopCamera(){
+        stream?.getTracks()?.forEach(t=>t.stop());
+        stream = null;
+      }
+      async function captureAndCompress(){
+        const vw = video.videoWidth || 640;
+        const vh = video.videoHeight || 480;
+        const maxW = 640;
+        const scale = Math.min(1, maxW / vw);
+        const cw = Math.round(vw * scale);
+        const ch = Math.round(vh * scale);
+        canvas.width = cw; canvas.height = ch;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, cw, ch);
+
+        // stepwise compress to <= 50KB
+        async function toBlob(q){ return new Promise(res=>canvas.toBlob(res,'image/jpeg', q)); }
+        let q = 0.8;
+        let blob = await toBlob(q);
+        while (blob && blob.size > 50000 && q > 0.2){
+          q -= 0.1;
+          blob = await toBlob(q);
+        }
+        // if still big, downscale further
+        let attempt = 0;
+        while (blob && blob.size > 50000 && attempt < 3){
+          attempt++;
+          const nw = Math.round(canvas.width * 0.85);
+          const nh = Math.round(canvas.height * 0.85);
+          const tmp = document.createElement('canvas');
+          tmp.width = nw; tmp.height = nh;
+          tmp.getContext('2d').drawImage(canvas, 0, 0, nw, nh);
+          canvas.width = nw; canvas.height = nh;
+          canvas.getContext('2d').drawImage(tmp, 0, 0, nw, nh);
+          q = Math.max(0.2, q - 0.1);
+          blob = await new Promise(r=>canvas.toBlob(r,'image/jpeg', q));
+        }
+        capturedBlob = blob;
+        capturedDataURL = canvas.toDataURL('image/jpeg', q);
+        if (blob && blob.size <= 50000){
+          toast({type:'success', message:'Foto siap diunggah (' + Math.round(blob.size/1024) + ' KB).'});
+          return true;
+        } else {
+          toast({type:'error', message:'Gagal kompres ≤50KB. Coba ulangi dengan pencahayaan cukup.'});
+          return false;
+        }
+      }
+
+      async function uploadCloudinary(blob){
+        const form = new FormData();
+        form.append('file', blob);
+        form.append('upload_preset', UPLOAD_PRESET);
+        const res = await fetch(CLOUD_URL, { method:'POST', body: form });
+        if (!res.ok) throw new Error('Cloudinary upload failed');
+        const json = await res.json();
+        return { url: json.secure_url, public_id: json.public_id };
+      }
+
+      // Notifikasi in-app (realtime)
+      function listenNotifications(){
+        const qNotif = query(collection(db, 'notifications'), where('uid','==', uid), orderBy('createdAt','desc'));
+        unsubscribeNotif = onSnapshot(qNotif, snap=>{
+          const items = [];
+          let unread = 0;
+          snap.forEach(d=>{
+            const n = d.data();
+            if (!n.read) unread++;
+            items.push({ id:d.id, ...n });
+          });
+          badgeNotif.style.display = unread ? 'inline-grid' : 'none';
+          if (unread){ badgeNotif.textContent = unread; }
+          notifList.innerHTML = items.length ? '' : '<div class="muted">Tidak ada notifikasi.</div>';
+          for (const n of items){
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = \`
+              <div>
+                <div><strong>\${n.title || 'Info'}</strong></div>
+                <div class="muted">\${n.message || ''}</div>
+              </div>
+              <div class="row">
+                \${n.link ? '<a class="btn-ghost" href="'+n.link+'"><iconify-icon icon="tabler:external-link" width="16"></iconify-icon>Buka</a>' : ''}
+                <button data-id="\${n.id}" class="btn-ghost act-read"><iconify-icon icon="tabler:check" width="16"></iconify-icon>Tandai</button>
+                <button data-id="\${n.id}" class="btn-ghost act-del"><iconify-icon icon="tabler:trash" width="16"></iconify-icon>Hapus</button>
+              </div>\`;
+            notifList.appendChild(div);
+          }
+          notifList.querySelectorAll('.act-read').forEach(btn=>{
+            btn.onclick = async ()=>{
+              await updateDoc(doc(db,'notifications', btn.dataset.id), { read:true });
+            };
+          });
+          notifList.querySelectorAll('.act-del').forEach(btn=>{
+            btn.onclick = async ()=>{
+              await deleteDoc(doc(db,'notifications', btn.dataset.id));
+            };
+          });
+        });
+      }
+      btnNotif.onclick = ()=> popNotif.classList.toggle('show');
+      btnCloseNotif.onclick = ()=> popNotif.classList.remove('show');
+      btnClearNotif.onclick = async ()=>{
+        const qs = await getDocs(query(collection(db,'notifications'), where('uid','==', uid)));
+        const ops = [];
+        qs.forEach(d=> ops.push(updateDoc(doc(db,'notifications', d.id), { read:true })));
+        await Promise.allSettled(ops);
+      };
+
+      // Profil popup
+      btnProfile.onclick = ()=> popProfile.classList.toggle('show');
+      btnCloseProfile.onclick = ()=> popProfile.classList.remove('show');
+      btnPickPfp.onclick = ()=> pfpFile.click();
+      pfpFile.onchange = async ()=>{
+        const file = pfpFile.files?.[0]; if (!file) return;
+        // compress simple via canvas
+        const img = new Image();
+        img.onload = async ()=>{
+          const c = document.createElement('canvas');
+          const maxW = 512;
+          const scale = Math.min(1, maxW / img.width);
+          c.width = Math.round(img.width*scale); c.height = Math.round(img.height*scale);
+          c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+          const blob = await new Promise(r=>c.toBlob(r,'image/jpeg',0.8));
+          try{
+            const {url} = await uploadCloudinary(blob);
+            pfp.src = url; infoPfp.src = url;
+            await updateDoc(doc(db,'users', uid), { photoURL:url, updatedAt: serverTimestamp() });
+            toast({type:'success', message:'Foto profil diperbarui.'});
+          }catch(e){ toast({type:'error', message:'Gagal unggah foto profil.'}); }
+        };
+        img.src = URL.createObjectURL(file);
+      };
+      btnSaveProfile.onclick = async ()=>{
+        const name = nameEl.value.trim();
+        const addr = addrEl.value.trim();
+        await updateDoc(doc(db,'users', uid), { name, address: addr, updatedAt: serverTimestamp() });
+        infoName.textContent = name || me.email.split('@')[0];
+        infoAddr.textContent = 'Alamat: ' + (addr || '-');
+        toast({type:'success', message:'Profil tersimpan.'});
+      };
+      btnLogout.onclick = async ()=>{ await signOut(auth); window.location.replace('/index.html'); };
+
+      // Presensi logic
+      function enableSaveIfReady(){
+        const now = new Date();
+        const st = computeStatus(now, jenisEl.value, me?.statusOverride);
+        const okayTime = st.kind !== 'err' && !(isSunday(now) && me?.statusOverride!=='wajib');
+        btnSimpan.disabled = !(capturedBlob && coords && okayTime);
+        const hint = !coords ? 'Tentukan lokasi.' : !capturedBlob ? 'Ambil foto terlebih dahulu.' : !okayTime ? 'Di luar waktu presensi.' : 'Siap simpan.';
+        saveHint.textContent = hint;
+      }
+
+      btnRefreshLoc.onclick = async ()=>{ await refreshLocation(); enableSaveIfReady(); };
+
+      btnStartCam.onclick = async ()=>{
+        await startCamera();
+      };
+      btnCapture.onclick = async ()=>{
+        if (!stream){ await startCamera(); }
+        const ok = await captureAndCompress();
+        if (ok){
+          video.classList.add('hide');
+          canvas.classList.remove('hide');
+          btnRetake.disabled = false;
+          btnCapture.disabled = true;
+          stopCamera();
+          enableSaveIfReady();
+        }
+      };
+      btnRetake.onclick = async ()=>{
+        capturedBlob = null; capturedDataURL = null;
+        canvas.classList.add('hide'); video.classList.remove('hide');
+        btnCapture.disabled = false; btnRetake.disabled = true;
+        await startCamera();
+        enableSaveIfReady();
+      };
+
+      async function savePresensi(){
+        const now = new Date();
+        // Guard jam
+        const st = computeStatus(now, jenisEl.value, me?.statusOverride);
+        if (st.kind === 'err' || (isSunday(now) && me?.statusOverride!=='wajib')){
+          toast({type:'error', message: st.text}); return;
+        }
+        if (!capturedBlob || !coords){ toast({type:'error', message:'Lengkapi foto & lokasi.'}); return; }
+
+        btnSimpan.disabled = true;
+        btnSimpan.querySelector('span').textContent = 'Menyimpan...';
+
+        try{
+          const { url, public_id } = await uploadCloudinary(capturedBlob);
+          const key = \`\${uid}_\${isoDate(now)}_\${jenisEl.value}\`;
+          const status = statusLabel(now, jenisEl.value);
+
+          await setDoc(doc(db,'presensi', key), {
+            key,
+            uid,
+            dateISO: isoDate(now),
+            jenis: jenisEl.value,
+            status, // tepat/terlambat/alpa
+            waktuServer: serverTimestamp(),
+            coords,
+            photoURL: url,
+            public_id,
+            name: me.name || me.email.split('@')[0],
+            email: me.email
+          }, { merge: true });
+
+          // Notif untuk karyawan (self) dan admin broadcast
+          await addDoc(collection(db,'notifications'), {
+            uid, title:'Presensi tersimpan',
+            message: \`\${jenisEl.value === 'berangkat' ? 'Berangkat' : 'Pulang'}: \${status}\`,
+            createdAt: serverTimestamp(), read:false
+          });
+          await addDoc(collection(db,'notifications'), {
+            uid: 'admin_broadcast',
+            title:'Presensi karyawan',
+            message: \`\${me.name || me.email} \${jenisEl.value} (\${status})\`,
+            createdAt: serverTimestamp(), read:false
+          });
+
+          toast({type:'success', message:'Presensi tersimpan.'});
+          // Reset capture
+          capturedBlob = null; capturedDataURL = null;
+          canvas.classList.add('hide'); video.classList.remove('hide');
+          btnCapture.disabled = false; btnRetake.disabled = true;
+          await startCamera();
+          enableSaveIfReady();
+        } catch(e){
+         ://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+      import {
+        getAuth, onAuthStateChanged, signOut
+      } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+      import {
+        getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp,
+        collection, query, where, orderBy, onSnapshot, getDocs, addDoc, deleteDoc
+      } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCt8OGr4HlmbjdxB0cSbm3_vkzm2NA3AXU",
+        authDomain: "presensi-2bbde.firebaseapp.com",
+        projectId: "presensi-2bbde",
+        storageBucket: "presensi-2bbde.firebasestorage.app",
+        messagingSenderId: "853002288058",
+        appId: "1:853002288058:web:a276789416fecf2b733b83",
+        measurementId: "G-Y1F50VXBDD"
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // Cloudinary
+      const CLOUD_NAME = "dn2o2vf04";
+      const UPLOAD_PRESET = "presensi_unsigned";
+      const CLOUD_URL = \`https://api.cloudinary.com/v1_1/\${CLOUD_NAME}/image/upload\`;
+
+// DOM
+      const infoPfp = document.getElementById('infoPfp');
+      const infoName = document.getElementById('infoName');
+      const infoEmail = document.getElementById('infoEmail');
+      const infoAddr = document.getElementById('infoAddr');
+      const statusChip = document.getElementById('statusChip');
+      const statusText = document.getElementById('statusText');
+      const serverTimeEl = document.getElementById('serverTime');
+      const serverDateEl = document.getElementById('serverDate');
+      const coordsText = document.getElementById('coordsText');
+      const btnRefreshLoc = document.getElementById('btnRefreshLoc');
+      const jenisEl = document.getElementById('jenis');
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const btnStartCam = document.getElementById('btnStartCam');
+      const btnCapture = document.getElementById('btnCapture');
+      const btnRetake = document.getElementById('btnRetake');
+      const camHelp = document.getElementById('camHelp');
+      const camErr = document.getElementById('camErr');
+      const btnSimpan = document.getElementById('btnSimpan');
+      const saveHint = document.getElementById('saveHint');
+      const listPresensi = document.getElementById('listPresensi');
+
+      const btnNotif = document.getElementById('btnNotif');
+      const popNotif = document.getElementById('popNotif');
+      const btnClearNotif = document.getElementById('btnClearNotif');
+      const btnCloseNotif = document.getElementById('btnCloseNotif');
+      const notifList = document.getElementById('notifList');
+      const badgeNotif = document.getElementById('badgeNotif');
+
+      const btnProfile = document.getElementById('btnProfile');
+      const popProfile = document.getElementById('popProfile');
+      const btnCloseProfile = document.getElementById('btnCloseProfile');
+      const pfp = document.getElementById('pfp');
+      const nameEl = document.getElementById('name');
+      const addrEl = document.getElementById('addr');
+      const pfpFile = document.getElementById('pfpFile');
+      const btnPickPfp = document.getElementById('btnPickPfp');
+      const btnSaveProfile = document.getElementById('btnSaveProfile');
+      const btnLogout = document.getElementById('btnLogout');
+
+      const btnCuti = document.getElementById('btnCuti');
+      const popCuti = document.getElementById('popCuti');
+      const btnCloseCuti = document.getElementById('btnCloseCuti');
+      const cutiJenis = document.getElementById('cutiJenis');
+      const cutiStart = document.getElementById('cutiStart');
+      const cutiEnd = document.getElementById('cutiEnd');
+      const cutiReason = document.getElementById('cutiReason');
+      const btnSubmitCuti = document.getElementById('btnSubmitCuti');
+      const cutiErr = document.getElementById('cutiErr');
+
+      // Global state
+      let me = null;
+      let uid = null;
+      let coords = null;
+      let stream = null;
+      let capturedBlob = null;
+      let capturedDataURL = null;
+      let unsubscribePresensi = null;
+      let unsubscribeNotif = null;
+
+      // Utils
+      const fmtTime = d => d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const fmtDate = d => d.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      const pad2 = n => String(n).padStart(2, '0');
+      const isoDate = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+      const isSunday = d => d.getDay() === 0;
+
+      function setStatusChip(kind, text) {
+        statusText.textContent = text;
+        statusChip.classList.remove('chip-ok', 'chip-warn', 'chip-err');
+        if (kind === 'ok') statusChip.classList.add('chip-ok');
+        else if (kind === 'warn') statusChip.classList.add('chip-warn');
+        else statusChip.classList.add('chip-err');
+      }
+
+      function getWindows(today) {
+        const base = {
+          berangkat: { start: "04:30", end: "05:30" },
+          pulang: { start: "10:00", end: "11:00" }
+        };
+        const tolMin = 30;
+        const parseHM = hm => {
+          const [h, m] = hm.split(':').map(Number);
+          const t = new Date(today);
+          t.setHours(h, m, 0, 0);
+          return t;
+        };
+        const addMin = (t, m) => {
+          const d = new Date(t);
+          d.setMinutes(d.getMinutes() + m);
+          return d;
+        };
+        const bStart = parseHM(base.berangkat.start);
+        const bEnd = parseHM(base.berangkat.end);
+        const bTol = addMin(bEnd, tolMin);
+
+        const pStart = parseHM(base.pulang.start);
+        const pEnd = parseHM(base.pulang.end);
+        const pTol = addMin(pEnd, tolMin);
+
+        return {
+          berangkat: { start: bStart, end: bEnd, tol: bTol },
+          pulang: { start: pStart, end: pEnd, tol: pTol }
+        };
+      }
+
+      function computeStatus(now, jenis, override) {
+        if (override === 'tidak-wajib') return { kind: 'warn', text: 'Tidak wajib presensi (override admin)' };
+        if (isSunday(now) && override !== 'wajib') return { kind: 'warn', text: 'Hari Minggu: Non-presensi' };
+        const win = getWindows(now)[jenis];
+        if (now < win.start) return { kind: 'warn', text: 'Di luar waktu presensi (belum mulai)' };
+        if (now <= win.end) return { kind: 'ok', text: 'Waktunya presensi (tepat waktu)' };
+        if (now <= win.tol) return { kind: 'warn', text: 'Waktunya presensi (toleransi keterlambatan)' };
+        return { kind: 'err', text: 'Di luar waktu presensi (lewat toleransi)' };
+      }
+
+      function statusLabel(now, jenis) {
+        const win = getWindows(now)[jenis];
+        if (now <= win.end) return 'tepat';
+        if (now <= win.tol) return 'terlambat';
+        return 'alpa';
+      }
+
+      function showCoords() {
+        const t = coords
+          ? `${coords.latitude.toFixed(6)}, ${coords.longitude.toFixed(6)}`
+          : 'Lokasi belum tersedia';
+        coordsText.querySelector('span').textContent = t;
+      }
+
+      function refreshLocation() {
+        return new Promise(resolve => {
+          if (!navigator.geolocation) {
+            toast({ type: 'error', message: 'Geolokasi tidak didukung.' });
+            return resolve(null);
+          }
+          navigator.geolocation.getCurrentPosition(pos => {
+            coords = {
+              latitude: pos.coords.latitude,
+              longitude: pos.coords.longitude,
+              accuracy: pos.coords.accuracy
+            };
+            showCoords();
+            resolve(coords);
+          }, () => {
+            toast({ type: 'error', message: 'Izin lokasi ditolak. Buka pengaturan browser untuk mengizinkan.' });
+            resolve(null);
+          }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+        });
+      }
+
+      async function startCamera() {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
+          video.srcObject = stream;
+          btnCapture.disabled = false;
+          btnRetake.disabled = true;
+          canvas.classList.add('hide');
+          video.classList.remove('hide');
+          camErr.hidden = true;
+        } catch {
+          camErr.textContent = 'Gagal mengakses kamera. Izinkan kamera di browser Anda.';
+          camErr.hidden = false;
+        }
+      }
+
+      function stopCamera() {
+        stream?.getTracks()?.forEach(t => t.stop());
+        stream = null;
+      }
+
+      async function captureAndCompress() {
+        const vw = video.videoWidth || 640;
+        const vh = video.videoHeight || 480;
+        const scale = Math.min(1, 640 / vw);
+        const cw = Math.round(vw * scale);
+        const ch = Math.round(vh * scale);
+        canvas.width = cw; canvas.height = ch;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, cw, ch);
+
+        const toBlob = q => new Promise(res => canvas.toBlob(res, 'image/jpeg', q));
+        let q = 0.8;
+        let blob = await toBlob(q);
+        while (blob.size > 50000 && q > 0.2) {
+          q -= 0.1;
+          blob = await toBlob(q);
+        }
+        let attempt = 0;
+        while (blob.size > 50000 && attempt < 3) {
+          attempt++;
+          const nw = Math.round(canvas.width * 0.85);
+          const nh = Math.round(canvas.height * 0.85);
+          const tmp = document.createElement('canvas');
+          tmp.width = nw; tmp.height = nh;
+          tmp.getContext('2d').drawImage(canvas, 0, 0, nw, nh);
+          canvas.width = nw; canvas.height = nh;
+          canvas.getContext('2d').drawImage(tmp, 0, 0, nw, nh);
+          q = Math.max(0.2, q - 0.1);
+          blob = await toBlob(q);
+        }
+
+        capturedBlob = blob;
+        capturedDataURL = canvas.toDataURL('image/jpeg', q);
+        if (blob.size <= 50000) {
+          toast({ type: 'success', message: `Foto siap diunggah (${Math.round(blob.size / 1024)} KB).` });
+          return true;
+        } else {
+          toast({ type: 'error', message: 'Gagal kompres ≤50KB. Coba ulangi dengan pencahayaan cukup.' });
+          return false;
+        }
+      }
+
+      async function uploadCloudinary(blob) {
+        const form = new FormData();
+        form.append('file', blob);
+        form.append('upload_preset', UPLOAD_PRESET);
+        const res = await fetch(CLOUD_URL, { method: 'POST', body: form });
+        if (!res.ok) throw new Error('Cloudinary upload failed');
+        return await res.json();
+      }
+
+      function listenNotifications() {
+        const qNotif = query(collection(db, 'notifications'), where('uid', '==', uid), orderBy('createdAt', 'desc'));
+        unsubscribeNotif = onSnapshot(qNotif, snap => {
+          const items = [];
+          let unread = 0;
+          snap.forEach(d => {
+            const n = d.data();
+            if (!n.read) unread++;
+            items.push({ id: d.id, ...n });
+          });
+          badgeNotif.style.display = unread ? 'inline-grid' : 'none';
+          badgeNotif.textContent = unread;
+          notifList.innerHTML = items.length ? '' : '<div class="muted">Tidak ada notifikasi.</div>';
+          items.forEach(n => {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `
+              <div>
+                <div><strong>${n.title}</strong></div>
+                <div class="muted">${n.message}</div>
+              </div>
+              <div class="row">
+                ${n.link ? `<a class="btn-ghost" href="${n.link}"><iconify-icon icon="tabler:external-link" width="16"></iconify-icon>Buka</a>` : ''}
+                <button data-id="${n.id}" class="btn-ghost act-read"><iconify-icon icon="tabler:check" width="16"></iconify-icon>Tandai</button>
+                <button data-id="${n.id}" class="btn-ghost act-del"><iconify-icon icon="tabler:trash" width="16"></iconify-icon>Hapus</button>
+              </div>`;
+            notifList.appendChild(div);
+          });
+          notifList.querySelectorAll('.act-read').forEach(btn => {
+            btn.onclick = async () => updateDoc(doc(db, 'notifications', btn.dataset.id), { read: true });
+          });
+          notifList.querySelectorAll('.act-del').forEach(btn => {
+            btn.onclick = async () => deleteDoc(doc(db, 'notifications', btn.dataset.id));
+          });
+        });
+      }
+
+      btnNotif.onclick = () => popNotif.classList.toggle('show');
+      btnCloseNotif.onclick = () => popNotif.classList.remove('show');
+      btnClearNotif.onclick = async () => {
+        const qs = await getDocs(query(collection(db, 'notifications'), where('uid', '==', uid)));
+        await Promise.all(qs.docs.map(d => updateDoc(doc(db, 'notifications', d.id), { read: true })));
+      };
+
+      btnProfile.onclick = () => popProfile.classList.toggle('show');
+      btnCloseProfile.onclick = () => popProfile.classList.remove('show');
+      btnPickPfp.onclick = () => pfpFile.click();
+      pfpFile.onchange = async () => {
+        const file = pfpFile.files[0];
+        if (!file) return;
+        const img = new Image();
+        img.onload = async () => {
+          const c = document.createElement('canvas');
+          const scale = Math.min(1, 512 / img.width);
+          c.width = img.width * scale; c.height = img.height * scale;
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.8));
+          try {
+            const { secure_url: url } = await uploadCloudinary(blob);
+            pfp.src = url; infoPfp.src = url;
+            await updateDoc(doc(db, 'users', uid), { photoURL: url, updatedAt: serverTimestamp() });
+            toast({ type: 'success', message: 'Foto profil diperbarui.' });
+          } catch {
+            toast({ type: 'error', message: 'Gagal unggah foto profil.' });
+          }
+        };
+        img.src = URL.createObjectURL(file);
+      };
+
+      btnSaveProfile.onclick = async () => {
+        const name = nameEl.value.trim();
+        const address = addrEl.value.trim();
+        await updateDoc(doc(db, 'users', uid), { name, address, updatedAt: serverTimestamp() });
+        infoName.textContent = name || me.email.split('@')[0];
+        infoAddr.textContent = 'Alamat: ' + (address || '-');
+        toast({ type: 'success', message: 'Profil tersimpan.' });
+      };
+
+      btnLogout.onclick = async () => {
+        await signOut(auth);
+        window.location.replace('/index.html');
+      };
+
+      // Presensi logic
+      function enableSaveIfReady() {
+        const now = new Date();
+        const st = computeStatus(now, jenisEl.value, me.statusOverride);
+        const okTime = st.kind !== 'err' && !(isSunday(now) && me.statusOverride !== 'wajib');
+        btnSimpan.disabled = !(capturedBlob && coords && okTime);
+        saveHint.textContent = !coords
+          ? 'Tentukan lokasi.'
+          : !capturedBlob
+            ? 'Ambil foto terlebih dahulu.'
+            : !okTime
+              ? 'Di luar waktu presensi.'
+              : 'Siap simpan.';
+      }
+
+      btnRefreshLoc.onclick = async () => {
+        await refreshLocation();
+        enableSaveIfReady();
+      };
+
+      btnStartCam.onclick = async () => { await startCamera(); };
+      btnCapture.onclick = async () => {
+        if (!stream) await startCamera();
+        if (await captureAndCompress()) {
+          video.classList.add('hide');
+          canvas.classList.remove('hide');
+          btnCapture.disabled = true;
+          btnRetake.disabled = false;
+          stopCamera();
+          enableSaveIfReady();
+        }
+      };
+      btnRetake.onclick = async () => {
+        capturedBlob = null;
+        canvas.classList.add('hide');
+        video.classList.remove('hide');
+        btnRetake.disabled = true;
+        btnCapture.disabled = false;
+        await startCamera();
+        enableSaveIfReady();
+      };
+
+      async function savePresensi() {
+        const now = new Date();
+        const st = computeStatus(now, jenisEl.value, me.statusOverride);
+        if (st.kind === 'err' || (isSunday(now) && me.statusOverride !== 'wajib')) {
+          return toast({ type: 'error', message: st.text });
+        }
+        if (!capturedBlob || !coords) {
+          return toast({ type: 'error', message: 'Lengkapi foto & lokasi.' });
+        }
+
+        btnSimpan.disabled = true;
+        btnSimpan.querySelector('span').textContent = 'Menyimpan...';
+
+        try {
+          const { secure_url: url, public_id } = await uploadCloudinary(capturedBlob);
+          const key = `${uid}_${isoDate(now)}_${jenisEl.value}`;
+          const status = statusLabel(now, jenisEl.value);
+          await setDoc(doc(db, 'presensi', key), {
+            key,
+            uid,
+            dateISO: isoDate(now),
+            jenis: jenisEl.value,
+            status,
+            waktuServer: serverTimestamp(),
+            coords,
+            photoURL: url,
+            public_id,
+            name: me.name,
+            email: me.email
+          }, { merge: true });
+
+          await addDoc(collection(db, 'notifications'), {
+            uid,
+            title: 'Presensi tersimpan',
+            message: `${jenisEl.value === 'berangkat' ? 'Berangkat' : 'Pulang'}: ${status}`,
+            createdAt: serverTimestamp(),
+            read: false
+          });
+          await addDoc(collection(db, 'notifications'), {
+            uid: 'admin_broadcast',
+            title: 'Presensi karyawan',
+            message: `${me.name} ${jenisEl.value} (${status})`,
+            createdAt: serverTimestamp(),
+            read: false
+          });
+
+          toast({ type: 'success', message: 'Presensi tersimpan.' });
+          capturedBlob = null;
+          video.classList.remove('hide');
+          canvas.classList.add('hide');
+          btnRetake.disabled = true;
+          btnCapture.disabled = false;
+          await startCamera();
+          enableSaveIfReady();
+        } catch {
+          toast({ type: 'error', message: 'Gagal menyimpan presensi.' });
+        } finally {
+          btnSimpan.querySelector('span').textContent = 'Simpan Presensi';
+          btnSimpan.disabled = false;
+        }
+      }
+      btnSimpan.onclick = savePresensi;
+
+      function listenPresensi() {
+        const qMe = query(
+          collection(db, 'presensi'),
+          where('uid', '==', uid),
+          orderBy('waktuServer', 'desc')
+        );
+        unsubscribePresensi = onSnapshot(qMe, snap => {
+          listPresensi.innerHTML = '';
+          if (snap.empty) {
+            listPresensi.innerHTML = '<div class="muted">Belum ada presensi.</div>';
+            return;
+          }
+          snap.forEach(d => {
+            const p = d.data();
+            const dt = p.waktuServer.toDate();
+            const el = document.createElement('div');
+            el.className = 'item';
+            el.innerHTML = `
+              <div>
+                <div><strong>${p.dateISO}</strong> — ${p.jenis.toUpperCase()} <span class="muted">(${p.status})</span></div>
+                <div class="meta">
+                  <span><iconify-icon icon="tabler:clock" width="14"></iconify-icon> ${fmtTime(dt)}</span>
+                  <span><iconify-icon icon="tabler:map-pin" width="14"></iconify-icon> ${p.coords.latitude.toFixed(5)}, ${p.coords.longitude.toFixed(5)}</span>
+                  <a class="link" href="${p.photoURL}" target="_blank"><iconify-icon icon="tabler:photo" width="14"></iconify-icon> Foto</a>
+                </div>
+              </div>
+              <div class="row">
+                <button class="btn-ghost act-del" data-id="${p.key}">
+                  <iconify-icon icon="tabler:trash" width="16"></iconify-icon> Hapus
+                </button>
+              </div>`;
+            listPresensi.appendChild(el);
+          });
+          listPresensi.querySelectorAll('.act-del').forEach(btn => {
+            btn.onclick = async () => {
+              if (!confirm('Hapus entri presensi ini?')) return;
+              await deleteDoc(doc(db, 'presensi', btn.dataset.id));
+              toast({ type: 'success', message: 'Entri presensi dihapus.' });
+            };
+          });
+        });
+      }
+
+      function startClock() {
+        function tick() {
+          const now = new Date();
+          serverTimeEl.textContent = fmtTime(now);
+          serverDateEl.textContent = fmtDate(now);
+          const s = computeStatus(now, jenisEl.value, me.statusOverride);
+          setStatusChip(s.kind, s.text);
+          enableSaveIfReady();
+        }
+        tick();
+        setInterval(tick, 1000);
+      }
+
+      jenisEl.onchange = () => enableSaveIfReady();
+
+      onAuthStateChanged(auth, async user => {
+        if (!user) {
+          window.location.replace('/index.html');
+          return;
+        }
+        uid = user.uid;
+        let snap = await getDoc(doc(db, 'users', uid));
+        if (!snap.exists()) {
+          await setDoc(doc(db, 'users', uid), {
+            uid,
+            email: user.email,
+            name: user.email.split('@')[0],
+            photoURL: user.photoURL || `https://api.dicebear.com/8.x/initials/svg?seed=${encodeURIComponent(user.email)}`,
+            role: 'karyawan',
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            address: '',
+            statusOverride: null
+          }, { merge: true });
+          snap = await getDoc(doc(db, 'users', uid));
+        }
+        me = snap.data();
+        if (me.role !== 'karyawan') {
+          if (me.role === 'admin') window.location.replace('/admin.html');
+          else { await signOut(auth); window.location.replace('/index.html'); }
+          return;
+        }
+
+        // bind profile info
+        infoPfp.src = me.photoURL;
+        infoName.textContent = me.name;
+        infoEmail.textContent = me.email;
+        infoAddr.textContent = 'Alamat: ' + (me.address || '-');
+        pfp.src = me.photoURL;
+        nameEl.value = me.name;
+        addrEl.value = me.address;
+
+        startClock();
+        await refreshLocation();
+        await startCamera();
+        enableSaveIfReady();
+        listenPresensi();
+        listenNotifications();
+      });
+
+      btnCuti.onclick = () => popCuti.classList.add('show');
+      btnCloseCuti.onclick = () => popCuti.classList.remove('show');
+      btnSubmitCuti.onclick = async () => {
+        const jenis = cutiJenis.value;
+        const s = cutiStart.value;
+        const e = cutiEnd.value;
+        const reason = cutiReason.value.trim();
+        if (!s || !e || !reason) {
+          cutiErr.textContent = 'Lengkapi jenis, tanggal, dan alasan.';
+          cutiErr.hidden = false;
+          return;
+        }
+        cutiErr.hidden = true;
+        await addDoc(collection(db, 'cutiRequests'), {
+          uid,
+          name: me.name,
+          email: me.email,
+          jenis,
+          start: s,
+          end: e,
+          reason,
+          status: 'pending',
+          createdAt: serverTimestamp()
+        });
+        await addDoc(collection(db, 'notifications'), {
+          uid: 'admin_broadcast',
+          title: 'Permintaan cuti',
+          message: `${me.name} mengajukan ${jenis} (${s}–${e})`,
+          createdAt: serverTimestamp(),
+          read: false,
+          link: '/admin.html'
+        });
+        toast({ type: 'success', message: 'Permintaan cuti dikirim.' });
+        popCuti.classList.remove('show');
+      };
+
+      document.addEventListener('click', e => {
+        if (!btnNotif.contains(e.target) && !popNotif.contains(e.target)) popNotif.classList.remove('show');
+        if (!btnProfile.contains(e.target) && !popProfile.contains(e.target)) popProfile.classList.remove('show');
+      });
+
+      window.addEventListener('beforeunload', () => stopCamera());
+    </script>
+  </body>
+</html>
